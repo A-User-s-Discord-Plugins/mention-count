@@ -1,9 +1,9 @@
-const { getModule, React } = require('powercord/webpack')
-const { NumberBadge } = getModule(['NumberBadge'], false)
+const { getModule, React } = require('@vizality/webpack')
+const { NumberBadge } = getModule('NumberBadge', false)
 
 let classes
 setImmediate(async () => {
-    classes = await getModule(['numberBadge'])
+    classes = await getModule('numberBadge')
 })
 
 module.exports = props => props && props.count ?

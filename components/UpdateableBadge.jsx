@@ -1,4 +1,4 @@
-const { React } = require('powercord/webpack')
+const { React } = require('@vizality/webpack')
 
 module.exports = class UpdateableBadge extends React.PureComponent {
     constructor(props) {

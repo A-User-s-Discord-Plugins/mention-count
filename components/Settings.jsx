@@ -1,5 +1,5 @@
-const { React } = require('powercord/webpack')
-const { RadioGroup, SwitchItem } = require('powercord/components/settings')
+const { React } = require('@vizality/webpack')
+const { RadioGroup, SwitchItem } = require('@vizality/components/settings')
 
 module.exports = class Settings extends React.PureComponent {
     render() {

@@ -1,28 +1,28 @@
-const { Plugin } = require('powercord/entities')
-const { getModule, FluxDispatcher, React } = require('powercord/webpack')
-const { inject, uninject } = require('powercord/injector')
+const { Plugin } = require('@vizality/entities')
+const { getModule, FluxDispatcher, React } = require('@vizality/webpack')
+const { patch, unpatch } = require('@vizality/patcher')
 
 const Badge = require('./components/Badge')
 const Settings = require('./components/Settings')
 const UpdateableBadge = require('./components/UpdateableBadge')
 
-const n = getModule(['NumberBadge'], false)
+const n = getModule('NumberBadge', false)
 const getNestedProp = (e, t) => t.split('.').reduce((e, p) => e && e[p], e)
 
 module.exports = class MentionCount extends Plugin {
-    async startPlugin() {
-        this.loadStylesheet('style.css')
-        powercord.api.settings.registerSettings(this.entityID, {
-            category: this.entityID,
-            label: 'Mention Count',
+    async onStart() {
+        this.injectStyles('style.css')
+        vizality.api.settings.registerAddonSettings({
+            id: this.entityID,
+            heading: 'Mention Count',
             render: p => React.createElement(Settings, { injectNumberBadge: this.injectNumberBadge, ...p })
         })
 
-        const { getTotalMentionCount: gm } = await getModule(['getGuildUnreadCount'])
-        const { listItem } = await getModule(['guildSeparator', 'listItem'])
-        const { DefaultHomeButton } = await getModule(['DefaultHomeButton'])
+        const { getTotalMentionCount: gm } = await getModule('getGuildUnreadCount')
+        const { listItem } = await getModule('guildSeparator', 'listItem')
+        const { DefaultHomeButton } = await getModule('DefaultHomeButton')
 
-        inject('mention-count', DefaultHomeButton.prototype, 'render', (_, res) => {
+        patch('mention-count', DefaultHomeButton.prototype, 'render', (_, res) => {
             const d = this.settings.get('display', 0)
 
             if (d == 2) {
@@ -59,19 +59,19 @@ module.exports = class MentionCount extends Plugin {
             if ((!d || d == 2) && this.badgeInstance && this.last != gm()) this.badgeInstance.forceUpdate()
         })
 
-        this.injectNumberBadge(this.settings.get('fixBadges'))
+        this.patchNumberBadge(this.settings.get('fixBadges'))
     }
 
-    async pluginWillUnload() {
-        powercord.api.settings.unregisterSettings(this.entityID)
-        uninject('mention-count')
-        this.injectNumberBadge(false)
+    async onStop() {
+        vizality.api.settings.unregisterSettings(this.entityID)
+        unpatch('mention-count')
+        this.patchNumberBadge(false)
         if (this.updateBadge) FluxDispatcher.unsubscribe('MESSAGE_CREATE', this.updateBadge)
     }
 
-    injectNumberBadge(bool) {
-        if (!bool) return uninject('mention-count-badge')
-        inject('mention-count-badge', n, 'NumberBadge', (args, res) => {
+    patchNumberBadge(bool) {
+        if (!bool) return unpatch('mention-count-badge')
+        patch('mention-count-badge', n, 'NumberBadge', (args, res) => {
             if (args[0] && args[0].count < 1000) return res
             return React.createElement(Badge, args[0])
         })
