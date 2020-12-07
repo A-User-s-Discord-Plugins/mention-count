@@ -13,7 +13,7 @@ module.exports = class MentionCount extends Plugin {
     async onStart() {
         this.injectStyles('style.css')
         vizality.api.settings.registerAddonSettings({
-            id: this.entityID,
+            id: this.addonId,
             heading: 'Mention Count',
             render: p => React.createElement(Settings, { injectNumberBadge: this.injectNumberBadge, ...p })
         })
@@ -63,7 +63,7 @@ module.exports = class MentionCount extends Plugin {
     }
 
     async onStop() {
-        vizality.api.settings.unregisterSettings(this.entityID)
+        vizality.api.settings.unregisterSettings(this.addonId)
         unpatch('mention-count')
         this.patchNumberBadge(false)
         if (this.updateBadge) FluxDispatcher.unsubscribe('MESSAGE_CREATE', this.updateBadge)
