@@ -15,7 +15,7 @@ module.exports = class MentionCount extends Plugin {
         vizality.api.settings.registerAddonSettings({
             id: this.addonId,
             heading: 'Mention Count',
-            render: p => React.createElement(Settings, { injectNumberBadge: this.injectNumberBadge, ...p })
+            render: p => React.createElement(Settings, { injectNumberBadge: this.patchNumberBadge, ...p })
         })
 
         const { getTotalMentionCount: gm } = await getModule('getGuildUnreadCount')
