@@ -10,9 +10,9 @@ const n = getModule('NumberBadge', false)
 const getNestedProp = (e, t) => t.split('.').reduce((e, p) => e && e[p], e)
 
 module.exports = class MentionCount extends Plugin {
-    async onStart() {
+    async start() {
         this.injectStyles('style.css')
-        vizality.api.settings.registerAddonSettings({
+        vizality.api.settings.registerAddonSettings({ // Using old setttings because uh Juby just made something wild
             id: this.addonId,
             heading: 'Mention Count',
             render: p => React.createElement(Settings, { injectNumberBadge: this.patchNumberBadge, ...p })
@@ -62,8 +62,7 @@ module.exports = class MentionCount extends Plugin {
         this.patchNumberBadge(this.settings.get('fixBadges'))
     }
 
-    async onStop() {
-        vizality.api.settings.unregisterSettings(this.addonId)
+    async stop() {
         unpatch('mention-count')
         this.patchNumberBadge(false)
         if (this.updateBadge) FluxDispatcher.unsubscribe('MESSAGE_CREATE', this.updateBadge)
