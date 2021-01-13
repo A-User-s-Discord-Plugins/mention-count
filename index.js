@@ -12,11 +12,7 @@ const getNestedProp = (e, t) => t.split('.').reduce((e, p) => e && e[p], e)
 module.exports = class MentionCount extends Plugin {
     async start() {
         this.injectStyles('style.css')
-        vizality.api.settings.registerAddonSettings({ // Using old setttings because uh Juby just made something wild
-            id: this.addonId,
-            heading: 'Mention Count',
-            render: p => React.createElement(Settings, { injectNumberBadge: this.patchNumberBadge, ...p })
-        })
+        this.registerSettings(Settings)
 
         const { getTotalMentionCount: gm } = await getModule('getGuildUnreadCount')
         const { listItem } = await getModule('guildSeparator', 'listItem')

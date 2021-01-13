@@ -31,6 +31,5 @@ module.exports = class Settings extends React.PureComponent {
 
     toggleFixBadges() {
         this.props.toggleSetting('fixBadges')
-        this.props.injectNumberBadge(this.props.getSetting('fixBadges'))
     }
 }
